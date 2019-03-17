@@ -1,27 +1,58 @@
 <template>
-<div class="grid-container">
-  <div class="grid-item"><xSign></xSign></div>
-  <div class="grid-item"><oSign></oSign></div>
-  <div class="grid-item"></div>
-  <div class="grid-item"></div>
-  <div class="grid-item"></div>
-  <div class="grid-item"></div>
-  <div class="grid-item"></div>
-  <div class="grid-item"></div>
-  <div class="grid-item"></div>
+<div>
+  <current-turn 
+    :turn="turn" 
+    :show-eror="showCurrentTurnError"
+  >
+  </current-turn>
+  <div class="grid-container">
+    <div
+      class="grid-item"
+      v-for="(field, index) in gameFields"
+      :key = "index"
+      v-on:click="clickOnGameBoard(index)"
+    >
+      {{ index }}
+    </div>
+  </div>
 </div>
 </template>
 <script>
 
+import currentTurn from '@/components/gameBoardComponents/currentTurn';
 import xSign from '@/components/gameBoardComponents/xSign';
 import oSign from '@/components/gameBoardComponents/oSign';
 
 export default {
   name: 'gameBoard',
-  props: {
-    msg: String,
+  data() {
+    return {
+      gameFields: this.createGameBoardValues(),
+      turn: 'x',
+      showCurrentTurnError: false,
+    };
+  },
+  props: {},
+  methods: {
+    createGameBoardValues() {
+      return new Array(9).map((item, index) => ({
+        fieldId: index,
+        fieldValue: null,
+      }));
+    },
+    clickOnGameBoard(fieldIndex) {
+      console.log(this)
+      this.showCurrentTurnError = false;
+      if (this.gameFields[fieldIndex].fieldValue === null) {
+        this.showCurrentTurnError = true;
+      } else {
+        this.gameFields[fieldIndex].fieldValue = this.turn;
+        this.turn = this.turn === 'x' ? 'o' : 'x';
+      }
+    }
   },
   components: {
+    currentTurn,
     xSign,
     oSign
   }
