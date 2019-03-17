@@ -5,15 +5,21 @@
     :show-error="showCurrentTurnError"
   >
   </current-turn>
-  <div class="grid-container">
+  <div >
     <div
-      class="grid-item"
-      v-for="(field, index) in gameFields"
-      :key = "index"
-      v-on:click="clickOnGameBoard(index)"
+      class="grid-container"
+      v-for="(row, rowIndex) in gameFields"
+      :key = "rowIndex"
     >
-      <xSign v-if="field.fieldValue ==='x'"></xSign>
-      <oSign v-if="field.fieldValue ==='o'"></osign>
+      <div
+        class="grid-item"
+        v-for="(field, index) in row"
+        :key = "index"
+        v-on:click="clickOnGameBoard(rowIndex, index)"
+      >
+        <xSign v-if="field.fieldValue ==='x'"></xSign>
+        <oSign v-if="field.fieldValue ==='o'"></osign>
+      </div>
     </div>
   </div>
 </div>
@@ -31,27 +37,32 @@ export default {
       gameFields: this.createGameBoardValues(),
       turn: 'x',
       showCurrentTurnError: false,
+      boardTraversers: [1, -1, 2, -2, 3, -3, 4, -4],
+      isDisabled: false,
     };
   },
   props: {},
   methods: {
     createGameBoardValues() {
-      console.log("MOOOO")
-      return new Array(9).fill(undefined).map((item, index) => ({
-        fieldId: index,
-        fieldValue: null,
-      }));
+      return new Array(3).fill(undefined)
+        .map(() => new Array(3).fill(undefined)
+          .map((item, index) => ({
+            fieldValue: null,
+          }
+          )));
     },
-    clickOnGameBoard(fieldIndex) {
+    clickOnGameBoard(rowIndex, index) {
+      console.log(rowIndex, index)
       this.showCurrentTurnError = false;
-      if (this.gameFields[fieldIndex].fieldValue !== null) {
-        this.showCurrentTurnError = true;
-      } else {
-        this.gameFields[fieldIndex].fieldValue = this.turn;
-        this.turn = this.turn === 'x' ? 'o' : 'x';
-        
+      if (!this.isDisabled) {
+        if (this.gameFields[rowIndex][index].fieldValue !== null) {
+          this.showCurrentTurnError = true;
+        } else {
+          this.gameFields[rowIndex][index].fieldValue = this.turn;
+          this.turn = this.turn === 'x' ? 'o' : 'x';
+        }
       }
-    }
+    },
   },
   components: {
     currentTurn,
