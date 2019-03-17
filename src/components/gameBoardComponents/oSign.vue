@@ -1,0 +1,18 @@
+<template>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12z"/>
+</svg>
+</template>
+<script>
+export default {
+  name: 'oSign',
+  props: {
+  },
+};
+</script>
+<style scoped lang="scss">
+svg {
+  height: 10vh;
+  fill:hsla(0, 0%, 20%, 1)
+}
+</style>
