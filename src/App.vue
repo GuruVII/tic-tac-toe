@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/">The game</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/Home">Home</router-link> 
     </div>
     <router-view/>
   </div>
@@ -14,7 +15,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #86c70f;
 }
 #nav {
   padding: 30px;
