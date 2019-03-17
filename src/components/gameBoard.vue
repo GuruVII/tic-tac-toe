@@ -5,7 +5,7 @@
     :show-error="showCurrentTurnError"
   >
   </current-turn>
-  <div >
+  <div>
     <div
       class="grid-container"
       v-for="(row, rowIndex) in gameFields"
@@ -13,6 +13,7 @@
     >
       <div
         class="grid-item"
+        :class="{ 'hide-top' : (rowIndex === 0), 'hide-left' : (index === 0)}"
         v-for="(field, index) in row"
         :key = "index"
         v-on:click="clickOnGameBoard(rowIndex, index)"
@@ -37,7 +38,6 @@ export default {
       gameFields: this.createGameBoardValues(),
       turn: 'x',
       showCurrentTurnError: false,
-      boardTraversers: [1, -1, 2, -2, 3, -3, 4, -4],
       isDisabled: false,
     };
   },
@@ -60,6 +60,7 @@ export default {
         } else {
           this.gameFields[rowIndex][index].fieldValue = this.turn;
           this.turn = this.turn === 'x' ? 'o' : 'x';
+          const currentPosition = [index, rowIndex];
         }
       }
     },
@@ -91,19 +92,12 @@ export default {
       // creates inner borders
       border-top: 1px solid #dfdfdf;
       border-left: 1px solid #dfdfdf;
-      &:nth-child(-n + 2) {
-        border-top: 1px solid #dfdfdf;
-      }
-      &:nth-child(odd) {
-        border-left: 1px solid #dfdfdf;
-      }
-      &:nth-child(-n + 3) {
+    }
+      .hide-top {
         border-top: none;
       }
-      &:first-child,
-      &:nth-child(3n + 1) {
+      .hide-left {
         border-left: none;
       }
-    }
   }
 </style>
