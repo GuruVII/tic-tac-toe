@@ -1,8 +1,8 @@
 <template>
 <div>
-  <current-turn 
-    :turn="turn" 
-    :show-eror="showCurrentTurnError"
+  <current-turn
+    :turn="turn"
+    :show-error="showCurrentTurnError"
   >
   </current-turn>
   <div class="grid-container">
@@ -12,7 +12,8 @@
       :key = "index"
       v-on:click="clickOnGameBoard(index)"
     >
-      {{ index }}
+      <xSign v-if="field.fieldValue ==='x'"></xSign>
+      <oSign v-if="field.fieldValue ==='o'"></osign>
     </div>
   </div>
 </div>
@@ -35,26 +36,27 @@ export default {
   props: {},
   methods: {
     createGameBoardValues() {
-      return new Array(9).map((item, index) => ({
+      console.log("MOOOO")
+      return new Array(9).fill(undefined).map((item, index) => ({
         fieldId: index,
         fieldValue: null,
       }));
     },
     clickOnGameBoard(fieldIndex) {
-      console.log(this)
       this.showCurrentTurnError = false;
-      if (this.gameFields[fieldIndex].fieldValue === null) {
+      if (this.gameFields[fieldIndex].fieldValue !== null) {
         this.showCurrentTurnError = true;
       } else {
         this.gameFields[fieldIndex].fieldValue = this.turn;
         this.turn = this.turn === 'x' ? 'o' : 'x';
+        
       }
     }
   },
   components: {
     currentTurn,
     xSign,
-    oSign
+    oSign,
   }
 };
 </script>

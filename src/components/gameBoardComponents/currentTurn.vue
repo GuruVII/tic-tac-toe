@@ -6,8 +6,9 @@
         <x-sign v-if="turn === 'x'"></x-sign>
         <o-sign v-if="turn === 'o'"></o-sign>
       </div>
+      <span class="error" v-if="showError">Field has already been clicked</span>
     </div>
-    <h4 class="error" v-if="showError">Field has already been clicked</h4>
+    
   </div>
 </template>
 <script>
@@ -29,7 +30,7 @@ export default {
 </script>
 <style scoped lang="scss">
   .current-turn-svg {
-    margin-left: 16px;
+    margin: 0px 16px;
     svg {
       height: 3vh;
       fill:hsla(0, 0%, 20%, 1)
@@ -42,5 +43,6 @@ export default {
   }
   .error {
     color: red;
+    font-weight: 1000;
   }
 </style>

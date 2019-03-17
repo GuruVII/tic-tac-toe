@@ -13,6 +13,6 @@ export default {
 <style scoped lang="scss">
 svg {
   height: 10vh;
-  fill:hsla(0, 0%, 20%, 1)
+  fill:hsla(0, 0%, 50%, 1)
 }
 </style>
