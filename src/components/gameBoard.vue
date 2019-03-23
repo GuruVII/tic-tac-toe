@@ -39,6 +39,8 @@ export default {
       turn: 'x',
       showCurrentTurnError: false,
       isDisabled: false,
+      columnInArray: 0,
+      rowInArray: 1,
     };
   },
   props: {},
@@ -51,19 +53,60 @@ export default {
           }
           )));
     },
-    clickOnGameBoard(rowIndex, index) {
-      console.log(rowIndex, index)
+    clickOnGameBoard(rowIndex, columnIndex) {
+      console.log(rowIndex, columnIndex)
       this.showCurrentTurnError = false;
       if (!this.isDisabled) {
-        if (this.gameFields[rowIndex][index].fieldValue !== null) {
+        if (this.gameFields[rowIndex][columnIndex].fieldValue !== null) {
           this.showCurrentTurnError = true;
         } else {
-          this.gameFields[rowIndex][index].fieldValue = this.turn;
+          this.gameFields[rowIndex][columnIndex].fieldValue = this.turn;
+          const currentPosition = [columnIndex, rowIndex];
+          this.prepareDataForVictoryCheck(currentPosition, this.gameFields, this.turn);
           this.turn = this.turn === 'x' ? 'o' : 'x';
-          const currentPosition = [index, rowIndex];
         }
       }
     },
+    prepareDataForVictoryCheck(fieldClicked, currentGameField, currentSymbol) {
+      const rowArray = currentGameField[fieldClicked[this.rowInArray]];
+      const columnArray = this.createColumnArray(fieldClicked, currentGameField)
+      const leftDiagonalArray = this.createLeftDiagonalArray(fieldClicked, currentGameField)
+      console.log(leftDiagonalArray)
+      const rightDiagonalArray = 1
+      //this.checkHorizontally(fieldClicked, currentGameField[fieldClicked[this.rowInArray]], currentSymbol);
+    },
+    checkForVic(fieldClicked, currentRow, currentSymbol) {
+      const victory = currentRow.map(item => item.fieldValue).every(item => item === currentSymbol);
+      if (victory) {
+        console.log('victory', victory)
+      }
+    },
+    createColumnArray(fieldClicked, gameFields) {
+      return gameFields.map(row => row[fieldClicked[this.columnInArray]].fieldValue);
+    },
+    createLeftDiagonalArray(fieldClicked, gameFields) {
+      //add rows, remove columns
+      let row = fieldClicked[this.rowInArray];
+      let column = fieldClicked[this.columnInArray];
+      //get coordinates of the top rightmost position in the diagonal;
+      while (row !== 0 || fieldClicked[row].lenght - 1 < column) {
+        row -= 1;
+        column += 1;
+      }
+      return gameFields.map((field, index) => {
+        if (index !== row) {
+          return undefined;
+        }
+        if (field[column]) {
+          const valueToBeReturned = field[column].fieldValue;
+          column -= 1;
+          row += 1;
+          return valueToBeReturned;
+        } else {
+          return undefined;
+        }
+      })
+    }
   },
   components: {
     currentTurn,
