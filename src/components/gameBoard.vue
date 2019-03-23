@@ -3,6 +3,7 @@
   <current-turn
     :turn="turn"
     :show-error="showCurrentTurnError"
+    :victory="victory"
   >
   </current-turn>
   <div>
@@ -40,6 +41,7 @@ export default {
       isDisabled: false,
       columnInArray: 0,
       rowInArray: 1,
+      victory: false,
     };
   },
   props: {},
@@ -53,7 +55,6 @@ export default {
           )));
     },
     clickOnGameBoard(rowIndex, columnIndex) {
-      console.log(rowIndex, columnIndex)
       this.showCurrentTurnError = false;
       if (!this.isDisabled) {
         if (this.gameFields[rowIndex][columnIndex].fieldValue !== null) {
@@ -61,25 +62,24 @@ export default {
         } else {
           this.gameFields[rowIndex][columnIndex].fieldValue = this.turn;
           const currentPosition = [columnIndex, rowIndex];
-          this.prepareDataForVictoryCheck(currentPosition, this.gameFields, this.turn);
-          this.turn = this.turn === 'x' ? 'o' : 'x';
+          const preparedData = this.prepareDataForVictoryCheck(currentPosition, this.gameFields);
+          console.log(preparedData)
+          this.victory = this.checkForVictory(preparedData, this.turn);
+          if (!this.victory) {
+            this.turn = this.turn === 'x' ? 'o' : 'x';
+          }
         }
       }
     },
-    prepareDataForVictoryCheck(fieldClicked, currentGameField, currentSymbol) {
-      const rowArray = currentGameField[fieldClicked[this.rowInArray]];
+    prepareDataForVictoryCheck(fieldClicked, currentGameField) {
+      const rowArray = currentGameField[fieldClicked[this.rowInArray]].map(item => item.fieldValue);
       const columnArray = this.createColumnArray(fieldClicked, currentGameField)
       const upwardDiagonalArray = this.createDiagonalArray(fieldClicked, currentGameField, -1, 1);
       const downwardDiagonalArray = this.createDiagonalArray(fieldClicked, currentGameField, -1, -1);
-      console.log('up', upwardDiagonalArray);
-      console.log("down", downwardDiagonalArray);
-      //this.checkHorizontally(fieldClicked, currentGameField[fieldClicked[this.rowInArray]], currentSymbol);
+      return [rowArray, columnArray, upwardDiagonalArray, downwardDiagonalArray];
     },
-    checkForVictory(fieldClicked, currentRow, currentSymbol) {
-      const victory = currentRow.map(item => item.fieldValue).every(item => item === currentSymbol);
-      if (victory) {
-        console.log('victory', victory)
-      }
+    checkForVictory(preparedData, currentSymbol) {
+      return preparedData.map(direction => direction.every(item => item === currentSymbol)).includes(true);
     },
     createColumnArray(fieldClicked, gameFields) {
       return gameFields.map(row => row[fieldClicked[this.columnInArray]].fieldValue);
@@ -94,8 +94,6 @@ export default {
           columnPosition += columnPositionChange;
         }
       }
-      console.log('row', rowPosition)
-      console.log('column', columnPosition)
       return gameFields.map((row, index) => {
         if (index !== rowPosition) {
           return undefined;

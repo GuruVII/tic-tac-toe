@@ -7,6 +7,7 @@
         <o-sign v-if="turn === 'o'"></o-sign>
       </div>
       <span class="error" v-if="showError">Field has already been clicked</span>
+      <span v-if="victory" class="victory">VICTORY FOR {{turn}}!</span>
     </div>
     
   </div>
@@ -21,6 +22,7 @@ export default {
   props: {
     turn: String,
     showError: Boolean,
+    victory: Boolean,
   },
   components: {
     xSign,
@@ -44,5 +46,11 @@ export default {
   .error {
     color: red;
     font-weight: 1000;
+  }
+  .victory {
+    color: green;
+    font-weight: 1000;
+    font-size: 1.5rem;
+    text-transform: uppercase;
   }
 </style>
