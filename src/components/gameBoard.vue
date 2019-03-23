@@ -69,9 +69,10 @@ export default {
     prepareDataForVictoryCheck(fieldClicked, currentGameField, currentSymbol) {
       const rowArray = currentGameField[fieldClicked[this.rowInArray]];
       const columnArray = this.createColumnArray(fieldClicked, currentGameField)
-      const leftDiagonalArray = this.createDownwardDiagonalArray(fieldClicked, currentGameField)
-      console.log(leftDiagonalArray)
-      const rightDiagonalArray = 1
+      const upwardDiagonalArray = this.createDiagonalArray(fieldClicked, currentGameField, -1, 1);
+      const downwardDiagonalArray = this.createDiagonalArray(fieldClicked, currentGameField, -1, -1);
+      console.log('up', upwardDiagonalArray);
+      console.log("down", downwardDiagonalArray);
       //this.checkHorizontally(fieldClicked, currentGameField[fieldClicked[this.rowInArray]], currentSymbol);
     },
     checkForVictory(fieldClicked, currentRow, currentSymbol) {
@@ -83,25 +84,26 @@ export default {
     createColumnArray(fieldClicked, gameFields) {
       return gameFields.map(row => row[fieldClicked[this.columnInArray]].fieldValue);
     },
-    createDownwardDiagonalArray(fieldClicked, gameFields) {
+    createDiagonalArray(fieldClicked, gameFields, rowPositionChange, columnPositionChange) {
       // add rows, remove columns
       let rowPosition = fieldClicked[this.rowInArray];
       let columnPosition = fieldClicked[this.columnInArray];
-      // get coordinates of the top rightmost position in the diagonal,
-      // when we have reached rowPosition 0 
-      // or when the gameField value doesn't exist, we want to stop chaing the position values
-      while (rowPosition > 0 && gameFields[columnPosition + 1]) {
-        rowPosition -= 1;
-        columnPosition += 1;
+      if (rowPosition !== 0 && gameFields[rowPosition][columnPosition + columnPositionChange]) {
+        while (rowPosition > 0 && gameFields[rowPosition][columnPosition + columnPositionChange]) {
+          rowPosition += rowPositionChange;
+          columnPosition += columnPositionChange;
+        }
       }
+      console.log('row', rowPosition)
+      console.log('column', columnPosition)
       return gameFields.map((row, index) => {
         if (index !== rowPosition) {
           return undefined;
         }
         if (row[columnPosition]) {
           const valueToBeReturned = row[columnPosition].fieldValue;
-          rowPosition += 1;
-          columnPosition -= 1;
+          rowPosition += (-1) * rowPositionChange;
+          columnPosition += (-1) * columnPositionChange;
           return valueToBeReturned;
         }
         return undefined;
