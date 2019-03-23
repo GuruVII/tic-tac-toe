@@ -26,7 +26,6 @@
 </div>
 </template>
 <script>
-
 import currentTurn from '@/components/gameBoardComponents/currentTurn';
 import xSign from '@/components/gameBoardComponents/xSign';
 import oSign from '@/components/gameBoardComponents/oSign';
@@ -70,12 +69,12 @@ export default {
     prepareDataForVictoryCheck(fieldClicked, currentGameField, currentSymbol) {
       const rowArray = currentGameField[fieldClicked[this.rowInArray]];
       const columnArray = this.createColumnArray(fieldClicked, currentGameField)
-      const leftDiagonalArray = this.createLeftDiagonalArray(fieldClicked, currentGameField)
+      const leftDiagonalArray = this.createDownwardDiagonalArray(fieldClicked, currentGameField)
       console.log(leftDiagonalArray)
       const rightDiagonalArray = 1
       //this.checkHorizontally(fieldClicked, currentGameField[fieldClicked[this.rowInArray]], currentSymbol);
     },
-    checkForVic(fieldClicked, currentRow, currentSymbol) {
+    checkForVictory(fieldClicked, currentRow, currentSymbol) {
       const victory = currentRow.map(item => item.fieldValue).every(item => item === currentSymbol);
       if (victory) {
         console.log('victory', victory)
@@ -84,29 +83,30 @@ export default {
     createColumnArray(fieldClicked, gameFields) {
       return gameFields.map(row => row[fieldClicked[this.columnInArray]].fieldValue);
     },
-    createLeftDiagonalArray(fieldClicked, gameFields) {
-      //add rows, remove columns
-      let row = fieldClicked[this.rowInArray];
-      let column = fieldClicked[this.columnInArray];
-      //get coordinates of the top rightmost position in the diagonal;
-      while (row !== 0 || fieldClicked[row].lenght - 1 < column) {
-        row -= 1;
-        column += 1;
+    createDownwardDiagonalArray(fieldClicked, gameFields) {
+      // add rows, remove columns
+      let rowPosition = fieldClicked[this.rowInArray];
+      let columnPosition = fieldClicked[this.columnInArray];
+      // get coordinates of the top rightmost position in the diagonal,
+      // when we have reached rowPosition 0 
+      // or when the gameField value doesn't exist, we want to stop chaing the position values
+      while (rowPosition > 0 && gameFields[columnPosition + 1]) {
+        rowPosition -= 1;
+        columnPosition += 1;
       }
-      return gameFields.map((field, index) => {
-        if (index !== row) {
+      return gameFields.map((row, index) => {
+        if (index !== rowPosition) {
           return undefined;
         }
-        if (field[column]) {
-          const valueToBeReturned = field[column].fieldValue;
-          column -= 1;
-          row += 1;
+        if (row[columnPosition]) {
+          const valueToBeReturned = row[columnPosition].fieldValue;
+          rowPosition += 1;
+          columnPosition -= 1;
           return valueToBeReturned;
-        } else {
-          return undefined;
         }
-      })
-    }
+        return undefined;
+      });
+    },
   },
   components: {
     currentTurn,
@@ -123,8 +123,8 @@ export default {
     align-items: center;
     grid-gap: 0px;
     .grid-item {
-      min-width: 20vh;
-      min-height: 20vh;
+      min-width: 20vw;
+      min-height: 20vw;
       display: flex;
       justify-content: center;
       align-items: center;

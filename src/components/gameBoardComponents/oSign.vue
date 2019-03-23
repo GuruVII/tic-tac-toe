@@ -12,7 +12,7 @@ export default {
 </script>
 <style scoped lang="scss">
 svg {
-  height: 10vh;
+  height: 10vw;
   fill:hsla(0, 0%, 50%, 1)
 }
 </style>
