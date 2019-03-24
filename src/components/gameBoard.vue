@@ -78,6 +78,7 @@ export default {
               currentPosition,
               this.getWinningDirection(preparedData, this.turn),
             );
+            this.isDisabled = true;
           }
         }
       }
@@ -170,21 +171,42 @@ export default {
               }));
             }
             return row;
-          })
+          });
         }
         case 'downwardDiagonal': {
-          return field;
+          return this.diagonalHighlight(fieldClicked, gameBoard, -1, -1);
         }
         case 'upwardDiagonal': {
-          return field;
+          return this.diagonalHighlight(fieldClicked, gameBoard, -1, 1)
         }
         default: {
-          break;
+          return field;
         }
-      
       }
-      
     },
+    diagonalHighlight(fieldClicked, gameFields, rowPositionChange, columnPositionChange) {
+      let rowPosition = fieldClicked[this.rowInArray];
+      let columnPosition = fieldClicked[this.columnInArray];
+      if (rowPosition !== 0 && gameFields[rowPosition][columnPosition + columnPositionChange]) {
+        while (rowPosition > 0 && gameFields[rowPosition][columnPosition + columnPositionChange]) {
+          rowPosition += rowPositionChange;
+          columnPosition += columnPositionChange;
+        }
+      }
+      return gameFields.map((row) => {
+        const tempRow = row.map((field, index) => {
+          if (columnPosition === index) {
+            return {
+              ...field,
+              fieldValue: field.fieldValue.toUpperCase(),
+            };
+          }
+          return field;
+        });
+        columnPosition += (-1) * columnPositionChange;
+        return tempRow;
+      });
+    }
   },
   components: {
     currentTurn,
@@ -201,8 +223,8 @@ export default {
     align-items: center;
     grid-gap: 0px;
     .grid-item {
-      min-width: 20vw;
-      min-height: 20vw;
+      min-width: 12vw;
+      min-height: 12vw;
       display: flex;
       justify-content: center;
       align-items: center;
