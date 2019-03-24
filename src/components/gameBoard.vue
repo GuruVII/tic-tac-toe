@@ -13,11 +13,11 @@
       :key = "rowIndex"
     >
       <div
-        class="grid-item"
-        :class="{ 'hide-top' : (rowIndex === 0), 'hide-left' : (index === 0)}"
         v-for="(field, index) in row"
+        class="grid-item"
+        :class="{'show-left' : (index !== 0), 'hide-top' : (rowIndex === 0)}"
         :key = "index"
-        v-on:click="clickOnGameBoard(rowIndex, index)"
+        @click="clickOnGameBoard(rowIndex, index)"
       >
         <xSign v-if="field.fieldValue ==='x'"></xSign>
         <oSign v-if="field.fieldValue ==='o'"></osign>
@@ -26,6 +26,7 @@
       </div>
     </div>
   </div>
+  <div class="btn" @click="resetGame">Reset Game</div>
 </div>
 </template>
 <script>
@@ -40,7 +41,6 @@ export default {
       gameFields: this.createGameBoardValues(),
       turn: 'x',
       showCurrentTurnError: false,
-      isDisabled: false,
       columnInArray: 0,
       rowInArray: 1,
       victory: false,
@@ -58,7 +58,7 @@ export default {
     },
     clickOnGameBoard(rowIndex, columnIndex) {
       this.showCurrentTurnError = false;
-      if (!this.isDisabled) {
+      if (!this.victory) {
         if (this.gameFields[rowIndex][columnIndex].fieldValue !== null) {
           this.showCurrentTurnError = true;
         } else {
@@ -78,7 +78,6 @@ export default {
               currentPosition,
               this.getWinningDirection(preparedData, this.turn),
             );
-            this.isDisabled = true;
           }
         }
       }
@@ -144,7 +143,6 @@ export default {
     },
     highlightVictoriousSymbols(gameBoard, fieldClicked, winningDirection) {
       const field = gameBoard.map(row => row);
-      console.log(winningDirection)
       switch (winningDirection) {
         case 'column': {
           const victoriousColumn = fieldClicked[this.columnInArray];
@@ -206,6 +204,11 @@ export default {
         columnPosition += (-1) * columnPositionChange;
         return tempRow;
       });
+    },
+    resetGame() {
+      this.gameFields = this.createGameBoardValues();
+      this.victory = false;
+      this.turn = 'x';
     }
   },
   components: {
@@ -223,8 +226,8 @@ export default {
     align-items: center;
     grid-gap: 0px;
     .grid-item {
-      min-width: 12vw;
-      min-height: 12vw;
+      min-width: 15vw;
+      min-height: 15vw;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -234,17 +237,34 @@ export default {
       }
       // creates inner borders
       border-top: 1px solid #dfdfdf;
-      border-left: 1px solid #dfdfdf;
     }
       .hide-top {
         border-top: none;
       }
-      .hide-left {
-        border-left: none;
+      .show-left {
+        border-left: 1px solid #dfdfdf;
       }
       .victory {
         fill: red;
         filter: drop-shadow( 5px 5px 4px rgba(0, 0, 0, .7));
       }
+  }
+  .btn {
+    cursor: pointer;
+    max-width: 100px;
+    padding: 5px 10px;
+    background-color: green;
+    color: whitesmoke;
+    text-transform: uppercase;
+    font-weight: 600;
+    user-select: none;
+    -webkit-transition: padding 0.2s; /* Safari */
+    transition: padding 0.2s;
+    &:active {
+      background-color: rgb(0, 78, 0);
+      padding: 7px 15px;
+      -webkit-transition: padding 0.2s; /* Safari */
+      transition: padding 0.2s;
+    }
   }
 </style>
