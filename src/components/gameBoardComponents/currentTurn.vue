@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="current-turn-container">
-      <div>Current turn:</div>
-      <div class="current-turn-svg">
+      <div v-if="!victory">Current turn:</div>
+      <div v-if="!victory" class="current-turn-svg">
         <x-sign v-if="turn === 'x'"></x-sign>
         <o-sign v-if="turn === 'o'"></o-sign>
       </div>
@@ -14,8 +14,8 @@
 </template>
 <script>
 
-import xSign from '@/components/gameBoardComponents/xSign';
-import oSign from '@/components/gameBoardComponents/oSign';
+import xSign from '@/components/gameBoardComponents/xSign.vue';
+import oSign from '@/components/gameBoardComponents/oSign.vue';
 
 export default {
   name: 'currentTurn',

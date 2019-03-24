@@ -21,15 +21,17 @@
       >
         <xSign v-if="field.fieldValue ==='x'"></xSign>
         <oSign v-if="field.fieldValue ==='o'"></osign>
+        <xSign class="victory" v-if="field.fieldValue ==='X'"></xSign>
+        <oSign class="victory" v-if="field.fieldValue ==='O'"></osign>
       </div>
     </div>
   </div>
 </div>
 </template>
 <script>
-import currentTurn from '@/components/gameBoardComponents/currentTurn';
-import xSign from '@/components/gameBoardComponents/xSign';
-import oSign from '@/components/gameBoardComponents/oSign';
+import currentTurn from '@/components/gameBoardComponents/currentTurn.vue';
+import xSign from '@/components/gameBoardComponents/xSign.vue';
+import oSign from '@/components/gameBoardComponents/oSign.vue';
 
 export default {
   name: 'gameBoard',
@@ -49,7 +51,7 @@ export default {
     createGameBoardValues() {
       return new Array(3).fill(undefined)
         .map(() => new Array(3).fill(undefined)
-          .map((item, index) => ({
+          .map(() => ({
             fieldValue: null,
           }
           )));
@@ -63,29 +65,55 @@ export default {
           this.gameFields[rowIndex][columnIndex].fieldValue = this.turn;
           const currentPosition = [columnIndex, rowIndex];
           const preparedData = this.prepareDataForVictoryCheck(currentPosition, this.gameFields);
-          console.log(preparedData)
-          this.victory = this.checkForVictory(preparedData, this.turn);
+          const victoryArray = this.checkForVictory(
+            Object.keys(preparedData).map(item => preparedData[item]),
+            this.turn,
+          );
+          this.victory = victoryArray.includes(true);
           if (!this.victory) {
             this.turn = this.turn === 'x' ? 'o' : 'x';
+          } else {
+            this.gameFields = this.highlightVictoriousSymbols(
+              this.gameFields,
+              currentPosition,
+              this.getWinningDirection(preparedData, this.turn),
+            );
           }
         }
       }
     },
     prepareDataForVictoryCheck(fieldClicked, currentGameField) {
       const rowArray = currentGameField[fieldClicked[this.rowInArray]].map(item => item.fieldValue);
-      const columnArray = this.createColumnArray(fieldClicked, currentGameField)
-      const upwardDiagonalArray = this.createDiagonalArray(fieldClicked, currentGameField, -1, 1);
-      const downwardDiagonalArray = this.createDiagonalArray(fieldClicked, currentGameField, -1, -1);
-      return [rowArray, columnArray, upwardDiagonalArray, downwardDiagonalArray];
+      const columnArray = this.createColumnArray(
+        fieldClicked,
+        currentGameField,
+      )
+      const upwardDiagonalArray = this.createDiagonalArray(
+        fieldClicked,
+        currentGameField,
+        -1,
+        1,
+      );
+      const downwardDiagonalArray = this.createDiagonalArray(
+        fieldClicked,
+        currentGameField,
+        -1,
+        -1,
+      );
+      return {
+        rowArray,
+        columnArray,
+        upwardDiagonalArray,
+        downwardDiagonalArray,
+      };
     },
     checkForVictory(preparedData, currentSymbol) {
-      return preparedData.map(direction => direction.every(item => item === currentSymbol)).includes(true);
+      return preparedData.map(direction => direction.every(item => item === currentSymbol));
     },
     createColumnArray(fieldClicked, gameFields) {
       return gameFields.map(row => row[fieldClicked[this.columnInArray]].fieldValue);
     },
     createDiagonalArray(fieldClicked, gameFields, rowPositionChange, columnPositionChange) {
-      // add rows, remove columns
       let rowPosition = fieldClicked[this.rowInArray];
       let columnPosition = fieldClicked[this.columnInArray];
       if (rowPosition !== 0 && gameFields[rowPosition][columnPosition + columnPositionChange]) {
@@ -106,6 +134,56 @@ export default {
         }
         return undefined;
       });
+    },
+    getWinningDirection(preparedData, currentSymbol) {
+      return Object.keys(preparedData)
+        .filter(item => preparedData[item].every(symbol => symbol === currentSymbol))
+        .join()
+        .replace('Array', '');
+    },
+    highlightVictoriousSymbols(gameBoard, fieldClicked, winningDirection) {
+      const field = gameBoard.map(row => row);
+      console.log(winningDirection)
+      switch (winningDirection) {
+        case 'column': {
+          const victoriousColumn = fieldClicked[this.columnInArray];
+          return field.map((item) => {
+            const row = [...item];
+            row[victoriousColumn].fieldValue = row[victoriousColumn].fieldValue.toUpperCase();
+            return {
+              ...row,
+              [victoriousColumn]: {
+                ...row[victoriousColumn],
+                fieldValue: row[victoriousColumn].fieldValue.toUpperCase()
+              },
+            };
+          });
+        }
+        case 'row': {
+          const victoriousRow = fieldClicked[this.rowInArray];
+          return field.map((item, index) => {
+            const row = [...item];
+            if (index === victoriousRow) {
+              return row.map(value => ({
+                ...value,
+                fieldValue: value.fieldValue.toUpperCase(),
+              }));
+            }
+            return row;
+          })
+        }
+        case 'downwardDiagonal': {
+          return field;
+        }
+        case 'upwardDiagonal': {
+          return field;
+        }
+        default: {
+          break;
+        }
+      
+      }
+      
     },
   },
   components: {
@@ -141,6 +219,10 @@ export default {
       }
       .hide-left {
         border-left: none;
+      }
+      .victory {
+        fill: red;
+        filter: drop-shadow( 5px 5px 4px rgba(0, 0, 0, .7));
       }
   }
 </style>
