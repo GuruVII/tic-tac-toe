@@ -15,7 +15,7 @@
       <div
         v-for="(field, index) in row"
         class="grid-item"
-        :class="{'show-left' : (index !== 0), 'hide-top' : (rowIndex === 0)}"
+        :class="{'hide-top' : (rowIndex === 0)}"
         :key = "index"
         @click="clickOnGameBoard(rowIndex, index)"
       >
@@ -236,14 +236,15 @@ export default {
         background-color: rgba(223, 223, 223, 0.2)
       }
       // creates inner borders
+      border-left: 1px solid #dfdfdf;
       border-top: 1px solid #dfdfdf;
-    }
-      .hide-top {
+      &:nth-child(3n+1) {
+          border-left: none;
+      }
+      &.hide-top {
         border-top: none;
       }
-      .show-left {
-        border-left: 1px solid #dfdfdf;
-      }
+    }
       .victory {
         fill: red;
         filter: drop-shadow( 5px 5px 4px rgba(0, 0, 0, .7));
