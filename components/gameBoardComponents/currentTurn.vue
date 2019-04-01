@@ -14,8 +14,8 @@
 </template>
 <script>
 
-import xSign from '@/components/gameBoardComponents/xSign.vue';
-import oSign from '@/components/gameBoardComponents/oSign.vue';
+import xSign from '~/components/gameBoardComponents/xSign.vue';
+import oSign from '~/components/gameBoardComponents/oSign.vue';
 
 export default {
   name: 'currentTurn',

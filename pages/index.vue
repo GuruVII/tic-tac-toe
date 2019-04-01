@@ -1,38 +1,38 @@
 <template>
-<div>
-  <current-turn
-    :turn="turn"
-    :show-error="showCurrentTurnError"
-    :victory="victory"
-  >
-  </current-turn>
   <div>
-    <div
-      class="grid-container"
-      v-for="(row, rowIndex) in gameFields"
-      :key = "rowIndex"
+    <current-turn
+      :turn="turn"
+      :show-error="showCurrentTurnError"
+      :victory="victory"
     >
+    </current-turn>
+    <div>
       <div
-        v-for="(field, index) in row"
-        class="grid-item"
-        :class="{'hide-top' : (rowIndex === 0)}"
-        :key = "index"
-        @click="clickOnGameBoard(rowIndex, index)"
+        class="grid-container"
+        v-for="(row, rowIndex) in gameFields"
+        :key = "rowIndex"
       >
-        <xSign v-if="field.fieldValue ==='x'"></xSign>
-        <oSign v-if="field.fieldValue ==='o'"></osign>
-        <xSign class="victory" v-if="field.fieldValue ==='X'"></xSign>
-        <oSign class="victory" v-if="field.fieldValue ==='O'"></osign>
+        <div
+          v-for="(field, index) in row"
+          class="grid-item"
+          :class="{'hide-top' : (rowIndex === 0)}"
+          :key = "index"
+          @click="clickOnGameBoard(rowIndex, index)"
+        >
+          <xSign v-if="field.fieldValue ==='x'"></xSign>
+          <oSign v-if="field.fieldValue ==='o'"></osign>
+          <xSign class="victory" v-if="field.fieldValue ==='X'"></xSign>
+          <oSign class="victory" v-if="field.fieldValue ==='O'"></osign>
+        </div>
       </div>
     </div>
+    <div class="btn" @click="resetGame">Reset Game</div>
   </div>
-  <div class="btn" @click="resetGame">Reset Game</div>
-</div>
 </template>
 <script>
-import currentTurn from '@/components/gameBoardComponents/currentTurn.vue';
-import xSign from '@/components/gameBoardComponents/xSign.vue';
-import oSign from '@/components/gameBoardComponents/oSign.vue';
+import currentTurn from '~/components/gameBoardComponents/currentTurn.vue';
+import xSign from '~/components/gameBoardComponents/xSign.vue';
+import oSign from '~/components/gameBoardComponents/oSign.vue';
 
 export default {
   name: 'gameBoard',
@@ -57,7 +57,7 @@ export default {
           )));
     },
     clickOnGameBoard(rowIndex, columnIndex) {
-      this.showCurrentTurnError = false;
+      this.showCurrentTurnError = false
       if (!this.victory) {
         if (this.gameFields[rowIndex][columnIndex].fieldValue !== null) {
           this.showCurrentTurnError = true;
